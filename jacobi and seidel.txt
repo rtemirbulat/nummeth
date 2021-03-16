@@ -1,0 +1,75 @@
+import math as m
+import numpy as np
+
+
+A = np.array([[10., -1., 2., 0.],
+              [-1., 11., -1., 3.],
+              [2., -1., 10., -1.],
+              [0., 3., -1., 8.]])
+
+
+b = np.array([6.0, 25.0, -11.0, 15.0])
+
+def jacobi_method(A,b):
+    print("System:" )
+    for i in range(A.shape[0]):
+        row = ["{}*x{}" .format(A[i, j], j + 1) for j in range(A.shape[1])]
+        print(" + ".join(row), "=", b[i])
+        print()
+er_list = []
+x = np.zeros_like(b) 
+for iterations in range(10000):
+    print("iteration" , iterations, 'sol:',x)
+    x_new = np.zeros_like (x)
+    for i in range(A.shape[0]):
+        s1 = np.dot(A[i,:i], x[:i]) #dot product coordinates-like form 
+        s2 = np.dot(A[i, i + 1:], x[i + 1:]) #second dot product
+        x_new[i] = (b[i] - s1 - s2) / A[i, i]
+    if np.allclose (x, x_new, atol=1e-10, rtol=0.): #convergence condition or  \ A*x(n) -b \ is small
+        break
+    x = x_new
+    error = np.dot(A, x) - b
+    er_list.append(error)
+
+print("Solution:" )
+print(x)
+print("Error:")
+print(er_list[len(er_list)-1])
+
+
+jacobi_method(A,b)
+
+
+### Seidel
+
+A = np.array([[10., -1., 2., 0.],
+              [-1., 11., -1., 3.],
+              [2., -1., 10., -1.],
+              [0., 3., -1., 8.]])
+
+b = np.array([6.0, 25.0, -11.0, 15.0])
+
+print("System of equations:")
+
+for i in range(A.shape[0]):
+    row = ["{0:3g}*x{1}".format(A[i, j], j + 1) for j in range(A.shape[1])]
+    print("[{0}] = [{1:3g}]".format(" + ".join(row), b[i]))
+
+x = np.zeros_like(b)
+for it_count in range(1, 10000):
+    x_new = np.zeros_like(x) # initialize first iter as 0-0-0-0
+    print("Iteration {0}: {1}".format(it_count, x))
+    for i in range(A.shape[0]):
+        s1 = np.dot(A[i, :i], x_new[:i])
+        s2 = np.dot(A[i, i + 1 :], x[i + 1 :])
+        x_new[i] = (b[i] - s1 - s2) / A[i, i]
+    if np.allclose(x, x_new, rtol=1e-10):
+        break
+    x = x_new
+
+print("Solution:")
+print(x)
+error = np.dot(A, x) - b
+print("Error: {0}".format(error))
+
+
